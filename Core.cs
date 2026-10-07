@@ -1,6 +1,7 @@
 ﻿using Alta;
 using Alta.Caves;
 using MelonLoader;
+using Mono.CSharp;
 using System.Reflection;
 using UnityEngine;
 
@@ -18,10 +19,9 @@ namespace CustomDistributionAPI
             distribution.name = name;
             RegisterDistribution(distribution);
             distribution.GetType().GetField("nullChance", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(distribution, nullChance);
-            distribution.GetType().GetField("globalMultipliers", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(distribution, new AttributeCurveRange[] { });
+            typeof(Distribution<Distribution, UnityEngine.Object, Distribution.Item, Distribution.FestivityGroup>).GetField("globalMultipliers", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(distribution, new AttributeCurveRange[] { });
             distribution.GetType().GetField("items", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(distribution, new List<Distribution.Item> { });
             distribution.GetType().GetField("festivities", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(distribution, new List<Distribution.FestivityGroup> { });
-
             return distribution;
         }
 

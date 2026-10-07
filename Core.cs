@@ -2,6 +2,7 @@
 using Alta.Caves;
 using MelonLoader;
 using System.Reflection;
+using UnityEngine;
 
 [assembly: MelonInfo(typeof(CustomDistributionAPI.Core), "CustomDistributionAPI", "1.0.0", "CGNik", null)]
 [assembly: MelonGame("Alta", "A Township Tale")]
@@ -10,6 +11,20 @@ namespace CustomDistributionAPI
 {
     public class Core : MelonMod
     {
+        public static Distribution CreateEmptyDistribution(int hash, string name, float nullChance)
+        {
+            Distribution distribution = GameObject.Instantiate(Distribution.All.Where(dist => dist.Hash == 49220u).First());
+            typeof(HashedGeneralValue<Distribution>).GetField("hash", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(distribution, hash);
+            distribution.name = name;
+            RegisterDistribution(distribution);
+            distribution.GetType().GetField("nullChance", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(distribution, nullChance);
+            distribution.GetType().GetField("globalMultipliers", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(distribution, new AttributeCurveRange[] { });
+            distribution.GetType().GetField("items", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(distribution, new List<Distribution.Item> { });
+            distribution.GetType().GetField("festivities", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(distribution, new List<Distribution.FestivityGroup> { });
+
+            return distribution;
+        }
+
         public static void AddToDistribution(Distribution distribution, UnityEngine.Object topic, float baseValue, float noAttributeValue, AttributeCurveRange[] multipliers)
         {
             List<Distribution.Item> items = (List<Distribution.Item>)distribution.GetType().GetField("items", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(distribution);
